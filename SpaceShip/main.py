@@ -25,7 +25,7 @@ TshipW = 300
 TshipH = 300
 
 BULLET_SPEED = 12
-MAX_BULLETS = 5
+MAX_BULLETS = 4
 
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
@@ -51,15 +51,12 @@ def window(red, yellow, red_bullets, yellow_bullets):
     WIN.blit(rotated_yellow_ship, (yellow.x, yellow.y))
     WIN.blit(rotated_red_ship, (red.x, red.y))
     
-    # circle_surface = pygame.Surface((100, 100), pygame.SRCALPHA)
-    # pygame.draw.circle(circle_surface, COLORS[1], (5, 5), 5)
-    # WIN.blit(circle_surface, (yellow.x + yellow.width // 2 - 5, yellow.y + yellow.height // 2 - 5))
 
     for bullet in red_bullets:
-        pygame.draw.rect(WIN, RED, bullet)  # Corrige aqui
+        pygame.draw.rect(WIN, RED, bullet)
         
     for bullet in yellow_bullets:
-        pygame.draw.rect(WIN, YELLOW, bullet)  # Corrige aqui
+        pygame.draw.rect(WIN, YELLOW, bullet)
     
     pygame.display.update()
 
@@ -117,6 +114,9 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
         
         if yellow.colliderect(bullet.rect):
             pygame.event.post(pygame.event.Event(YELLOW_HIT))
+        
+    if yellow.colliderect(red):
+        pygame.event.post(pygame.event.Event(CRASHED))
             
 
 class Bullet:
@@ -145,7 +145,7 @@ def main():
                 if event.key == pygame.K_LCTRL and len(red_bullets) < MAX_BULLETS: # Red
                     
                     bullet_velocity = pygame.math.Vector2(0, -BULLET_SPEED).rotate(-angle)
-                    bullet_rect = pygame.Rect(red.x + (red.width / 2) - 5, red.y + (red.height / 2) - 5, 10, 10)
+                    bullet_rect = pygame.Rect(red.x + red.width // 2, red.y + red.height // 2, 10, 10)
                     red_bullets.append(Bullet(bullet_rect, bullet_velocity))
                     pygame.mixer.Sound(os.path.join("Assets", "Gun+Silencer.mp3")).play()
                     print(f"Red: {angle}")
