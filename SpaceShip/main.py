@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 
 pygame.mixer.init()
 pygame.display.set_caption("Space Battle")
@@ -21,11 +22,12 @@ RED = 255, 0, 0
 
 shipW = 50
 shipH = 50
-TshipW = 300
-TshipH = 300
 
 BULLET_SPEED = 12
 MAX_BULLETS = 4
+asteroids = []
+time_since_last_asteroid = 0
+asteroid_spawn_delay = 3
 
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
@@ -39,10 +41,9 @@ redX, redY = (WIDTH / 2) - 49, 1
 
 BACKGROUND = pygame.transform.scale((pygame.image.load(os.path.join('Assets', 'space.png'))), (WIDTH, HEIGHT))
 
-
-def window(red, yellow, red_bullets, yellow_bullets):
-    global COLORS
+def window(red, yellow, red_bullets, yellow_bullets, asteroids):
     global angle
+    
     angle = (pygame.math.Vector2(yellow.x - red.x, yellow.y - red.y).angle_to((0, 0))) - 90
     rotated_red_ship = pygame.transform.rotate(RED_SHIP_SPRITE, angle)
     rotated_yellow_ship = pygame.transform.rotate(YELLOW_SHIP_SPRITE, angle)
@@ -50,14 +51,38 @@ def window(red, yellow, red_bullets, yellow_bullets):
     WIN.blit(BACKGROUND, (0, 0))
     WIN.blit(rotated_yellow_ship, (yellow.x, yellow.y))
     WIN.blit(rotated_red_ship, (red.x, red.y))
-    
 
     for bullet in red_bullets:
         pygame.draw.rect(WIN, RED, bullet)
         
     for bullet in yellow_bullets:
         pygame.draw.rect(WIN, YELLOW, bullet)
+        
+    for asteroid in asteroids[:]: 
+        WIN.blit(asteroid["image"], (asteroid["rect"].x, asteroid["rect"].y))
+        asteroid["rect"].x -= 2  
+        if asteroid["rect"].x < -100:  
+            asteroids.remove(asteroid)
+        if red.colliderect(asteroid["rect"]):
+            pygame.event.post(pygame.event.Event(CRASHED))
+            print("Red Crashed")
+        if yellow.colliderect(asteroid["rect"]):
+            pygame.event.post(pygame.event.Event(CRASHED))
+            print("Yellow Crashed")
     
+    MAXASTEROIDS = 10
+    if len(asteroids) < MAXASTEROIDS:
+        if random.randint(0, 1500) < 10:
+            randomasteroid = random.randint(1, 2)
+            asteroidsizex = random.randint(20, 300)
+            asteroidsizey = asteroidsizex
+            asteroid_image = pygame.transform.scale(pygame.image.load(os.path.join("Assets", f"asteroid{randomasteroid}new.png")), (asteroidsizex, asteroidsizey))
+            asteroid_rect = asteroid_image.get_rect()
+            asteroid_rect.x = WIDTH + 300
+            asteroid_rect.y = random.randint(0, HEIGHT - asteroid_rect.height)
+            asteroid = {"image": asteroid_image, "rect": asteroid_rect}
+            asteroids.append(asteroid)
+        
     pygame.display.update()
 
 
@@ -117,6 +142,7 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
         
     if yellow.colliderect(red):
         pygame.event.post(pygame.event.Event(CRASHED))
+    
             
 
 class Bullet:
@@ -177,7 +203,7 @@ def main():
         yellow_move(keys_pressed, yellow)
         handle_bullets(yellow_bullets, red_bullets, yellow, red)
             
-        window(red, yellow, red_bullets, yellow_bullets)
+        window(red, yellow, red_bullets, yellow_bullets, asteroids)
     
     pygame.quit()
     
