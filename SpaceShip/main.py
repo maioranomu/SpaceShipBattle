@@ -1,6 +1,7 @@
 import pygame
 import os
 
+pygame.mixer.init()
 pygame.display.set_caption("Space Battle")
 WIDTH, HEIGHT = 1800, 1000
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -146,6 +147,7 @@ def main():
                     bullet_velocity = pygame.math.Vector2(0, -BULLET_SPEED).rotate(-angle)
                     bullet_rect = pygame.Rect(red.x + (red.width / 2) - 5, red.y + (red.height / 2) - 5, 10, 10)
                     red_bullets.append(Bullet(bullet_rect, bullet_velocity))
+                    pygame.mixer.Sound(os.path.join("Assets", "Gun+Silencer.mp3")).play()
                     print(f"Red: {angle}")
                                 
                 if event.key == pygame.K_RCTRL and len(yellow_bullets) < MAX_BULLETS:  # Yellow
@@ -153,6 +155,7 @@ def main():
                     bullet_velocity = pygame.math.Vector2(0, BULLET_SPEED).rotate(-angle)
                     bullet_rect = pygame.Rect(yellow.x + yellow.width // 2, yellow.y + yellow.height // 2, 10, 10)
                     yellow_bullets.append(Bullet(bullet_rect, bullet_velocity))
+                    pygame.mixer.Sound(os.path.join("Assets", "Gun+Silencer.mp3")).play()
                     print(f"Yellow: {angle}")
 
                 
