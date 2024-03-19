@@ -2,7 +2,8 @@ import pygame
 import os
 import random
 from screeninfo import get_monitors
-
+redwon = False
+yellowon = False
 pygame.mixer.init()
 
 def get_screen_resolution():
@@ -39,6 +40,8 @@ asteroid_spawn_delay = 3
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 CRASHED = pygame.USEREVENT + 3
+REDCRASHED = pygame.USEREVENT + 4
+YELLOWCRASHED = pygame.USEREVENT + 5
 
 YELLOW_SHIP_SPRITE = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), (shipW, shipH))
 yellowX, yellowY = (WIDTH / 2) - shipW, HEIGHT - 101
@@ -53,7 +56,7 @@ i = 0
 c = 0
 countdown = 0
 def window(red, yellow, red_bullets, yellow_bullets, asteroids):
-    global angle, asteroidspeed, countdown, c, i
+    global angle, asteroidspeed, countdown, c, i, redwon, yellowwon
     
     angle = (pygame.math.Vector2(yellow.x - red.x, yellow.y - red.y).angle_to((0, 0))) - 90
     rotated_red_ship = pygame.transform.rotate(RED_SHIP_SPRITE, angle)
@@ -75,11 +78,11 @@ def window(red, yellow, red_bullets, yellow_bullets, asteroids):
         if asteroid["rect"].x < -300:  
             asteroids.remove(asteroid)
         if red.colliderect(asteroid["rect"]):
-            pygame.event.post(pygame.event.Event(CRASHED))
-            print("Red Crashed")
+            yellowwon = True
+            pygame.event.post(pygame.event.Event(REDCRASHED))
         if yellow.colliderect(asteroid["rect"]):
-            pygame.event.post(pygame.event.Event(CRASHED))
-            print("Yellow Crashed")
+            redwon = True
+            pygame.event.post(pygame.event.Event(YELLOWCRASHED))
     
     MAXASTEROIDS = 8
     if len(asteroids) < MAXASTEROIDS:
@@ -186,7 +189,9 @@ def main():
     yellow = pygame.Rect(yellowX, yellowY, shipW, shipH)
     
     run = True
-    
+    crash = False
+    yellowwon = False
+    redwon = False
     while run:
         
         clock.tick(FPS)
@@ -198,7 +203,7 @@ def main():
                 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    run = False
+                    pygame.quit()
                     
                 if event.key == pygame.K_LCTRL and len(red_bullets) < MAX_BULLETS: # Red
                     
@@ -208,7 +213,7 @@ def main():
                     pygame.mixer.Sound(os.path.join("Assets", "Gun+Silencer.mp3")).play()
                     print(f"Red: {angle}")
                                 
-                if event.key == pygame.K_RCTRL and len(yellow_bullets) < MAX_BULLETS:  # Yellow
+                if event.key == pygame.K_SLASH and len(yellow_bullets) < MAX_BULLETS:  # Yellow
                     
                     bullet_velocity = pygame.math.Vector2(0, BULLET_SPEED).rotate(-angle)
                     bullet_rect = pygame.Rect(yellow.x + yellow.width // 2, yellow.y + yellow.height // 2, 10, 10)
@@ -218,17 +223,32 @@ def main():
 
                 
             if event.type == pygame.USEREVENT + 1:
-                print("RED WON")
+                # print("RED WON")
+                redwon = True
                 run = False
                 
             if event.type == pygame.USEREVENT + 2:
-                print("YELLOW WON")
+                # print("YELLOW WON")
+                yellowwon = True
                 run = False
             
             if event.type == pygame.USEREVENT + 3:
-                print("Crashed")
+                # print("Crashed")
+                crash = True
+                run = False  
+                
+            if event.type == pygame.USEREVENT + 4:
+                # print("Red Crashed")
+                crash = True
+                yellowwon = True
                 run = False
-
+            
+            if event.type == pygame.USEREVENT + 5:
+                # print("Yellow Crashed")
+                crash = True
+                redwon = True
+                run = False
+            
         keys_pressed = pygame.key.get_pressed()
         
         red_move(keys_pressed, red)
@@ -238,8 +258,80 @@ def main():
         
         window(red, yellow, red_bullets, yellow_bullets, asteroids)
     
-    pygame.quit()
-    
+    while not run:
+        
+        while redwon:
+            for event in pygame.event.get():
+        
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+            clock.tick(FPS)
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_red.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            # print("Debug red")
+            pygame.display.update()
+        
+        while yellowwon:
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+            clock.tick(FPS)
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            # print("Debug yellow")
+            pygame.display.update()
+        
+        while crash and yellowwon:
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        
+            clock.tick(FPS)
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            # print("Debug yellow")
+            pygame.display.update()
+        
+        while crash and redwon:
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        
+            clock.tick(FPS)
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_red.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            # print("Debug red")
+            pygame.display.update()
+          
+        while crash and not redwon or crash and not yellowwon:
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        
+            clock.tick(FPS)
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "asteroid1.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            # print("Debug draw")
+            pygame.display.update()
 
 if __name__ == "__main__":
     main()
