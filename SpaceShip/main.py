@@ -270,7 +270,8 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
             clock.tick(FPS)
-            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_red.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_red.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 100)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "redwon.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 25)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 0))
             # print("Debug red")
             pygame.display.update()
         
@@ -284,7 +285,8 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
             clock.tick(FPS)
-            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 100)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "yellowwon.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 25)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 0))
             # print("Debug yellow")
             pygame.display.update()
         
@@ -299,7 +301,8 @@ def main():
                         pygame.quit()
                         
             clock.tick(FPS)
-            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_yellow.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 100)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "yellowwon.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 25)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 0))
             # print("Debug yellow")
             pygame.display.update()
         
@@ -314,7 +317,8 @@ def main():
                         pygame.quit()
                         
             clock.tick(FPS)
-            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_red.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 75)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "spaceship_red.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 100)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 10))
+            WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("Assets", "redwon.png")), ((WIDTH / 100) * 50, (HEIGHT / 100) * 25)), ((WIDTH / 100) * 25, (HEIGHT / 100) * 0))
             # print("Debug red")
             pygame.display.update()
           
@@ -334,4 +338,4 @@ def main():
             pygame.display.update()
 
 if __name__ == "__main__":
-    main()
+    main() 
